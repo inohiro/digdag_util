@@ -1,6 +1,7 @@
 require 'time'
 require 'pp'
 require 'open3'
+require 'json' # Ruby 2.3.x requires this
 
 ENV['TZ'] = 'UTC'
 DEFAULT_ENDPOINT = ''
@@ -12,9 +13,15 @@ class Param
   end
   
   def initialize(last_session_time, next_session_time, last_executed_session_time)
-    @last_session_time = Time.parse(last_session_time)
-    @next_session_time = Time.parse(next_session_time)
-    @last_executed_session_time = Time.parse(last_executed_session_time)
+    begin
+      @last_session_time = Time.parse(last_session_time)
+      @next_session_time = Time.parse(next_session_time)
+      @last_executed_session_time = Time.parse(last_executed_session_time)
+    rescue
+      @last_session_time = nil
+      @next_session_time = nil
+      @last_executed_session_time = nil
+    end
   end
 
   def retried?
